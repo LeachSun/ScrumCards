@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ScrumCards-Master</title>
+    <style>
+        #startup {
+            position: absolute;
+            width: 100%;
+            height: 1000px;
+            z-index: 100;
+            background-color: #FFFFFF;
+            text-align: center;
+
+        }
+        #btn_startup {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top:10%;
+            width: 160px;
+            height: 60px;
+        }
+        #dashboard {
+            margin: 10px;
+        }
+        #members {
+            float:left;
+            width:30%;
+            height: 100%;
+            min-height: 300px;
+            border: 1px solid black;
+        }
+        #estimate {
+            float:left;
+            width:60%;
+            height: 100%;
+            min-height: 300px;
+            border: 1px solid black;
+        }
+        #result {
+            min-height: 200px;
+            text-align: center;
+            font-size: 10vw;
+        }
+        #operator {
+            text-align: center;
+        }
+        #operator button {
+            width: 120px;
+            height: 50px;
+            font-size: 2vw;
+        }
+        .member ul, .member ul li{
+            list-style: none;
+        }
+
+        .dashboard-cell {
+            width: 100px;
+            display: inline-block;
+            text-align: center;
+        }
+        .cell-title {
+            width: 50px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+<div id="startup">
+    <button id="btn_startup">start</button>
+</div>
+<div id="dashboard">
+    <div id="members">
+        <ul>
+            <!--<li><span class="member-name">member1</span>: <span class="member-estimate">5</span></li>
+            <li><span class="member-name">member2</span>: <span class="member-estimate">3</span></li>
+            <li><span class="member-name">member3</span>: <span class="member-estimate">6</span></li>-->
+        </ul>
+    </div>
+    <div id="estimate">
+        <div id="result"></div>
+        <div id="operator">
+            <button type="button" id="btn_show">show</button>
+            <button type="button" id="btn_clear">clear</button>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src=js/jquery-3.2.1.min.js></script>
+<script src=js/common.js></script>
+<script src=js/message.js></script>
+<script>
+    var meetingKey = getUrlParam("key");
+
+    var cardWebsocket;
+
+    $(function(){
+
+        if (meetingKey != undefined) {
+            initWebsocket(meetingKey);
+            $("#startup").remove();
+        }
+    });
+
+    $("#btn_startup").click(function() {
+        ajaxRequest("metting/create", "post", {}, function(data){
+            window.location.href = addUrlParam(window.location.href, "key", data.model);
+        });
+    });
+
+    $("#btn_show").click(function() {
+        var pointTotal = 0;
+        var memberCount = 0;
+        $(".member-estimate").each(function(){
+            var point = parseInt($(this).attr("value"));
+            pointTotal += point;
+            memberCount++;
+            $(this).html(point);
+        });
+
+        $("#result").html(pointTotal / memberCount);
+    });
+
+    $("#btn_clear").click(function() {
+        $(".member-estimate").attr("value", 0);
+        $(".member-estimate").html("wait");
+
+        $("#result").html(0);
+        cardWebsocket.sendMsg(new Msg("RESUME"));
+    });
+
+    function initWebsocket(meetingKey) {
+        cardWebsocket = new CardWebsocket(webSocketUrl + meetingKey,
+            function(){
+                heartbeat(cardWebsocket);
+                cardWebsocket.sendMsg(new Msg("MASTER_REG"));
+            },
+            function(msg) {
+                switch (msg.code) {
+                    case 200:
+                        $("#members ul").append('<li id="' + msg.model.memberKey + '"><span class="member-name" >' + msg.model.nickname + '</span>: <span class="member-estimate" value="0">wait</span></li>');
+                        break;
+                    case 201:
+                        $("#" + msg.model.memberKey).remove();
+                        break;
+                    case 202:
+                        $("#" + msg.model.memberKey + " .member-estimate").html("yes");
+                        $("#" + msg.model.memberKey + " .member-estimate").attr("value", msg.model.point);
+                        break;
+                }
+        });
+    }
+
+    function heartbeat(ws) {
+        if (ws == undefined || ws == null || ws.state() != 1) {
+            alert("Not Connected");
+            return;
+        }
+        ws.sendMsg(new Msg("HEARTBEAT"));
+        setTimeout(function(){
+            heartbeat(ws);
+        }, 2000);
+    }
+</script>
+</html>
