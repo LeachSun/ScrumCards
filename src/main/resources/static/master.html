@@ -124,9 +124,11 @@
         var memberCount = 0;
         $(".member-estimate").each(function(){
             var point = parseInt($(this).attr("value"));
-            pointTotal += point;
-            memberCount++;
-            $(this).html(point);
+            if (point > 0) {
+                pointTotal += point;
+                memberCount++;
+                $(this).html(point);
+            }
         });
 
         $("#result").html(pointTotal / memberCount);

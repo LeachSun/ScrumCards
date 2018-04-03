@@ -209,6 +209,10 @@
                 return;
             }
             var currentTime = this.innerText;
+            if ("∞" == currentTime) {
+                // not supported
+                return;
+            }
 
             if (hasClass(this, "member-btn-selected")) {
                 calculate(false, currentTime);
