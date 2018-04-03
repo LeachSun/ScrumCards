@@ -25,17 +25,23 @@
         }
         #members {
             float:left;
-            width:30%;
+            width:20%;
             height: 100%;
             min-height: 300px;
             border: 1px solid black;
         }
         #estimate {
             float:left;
-            width:60%;
+            width:40%;
             height: 100%;
             min-height: 300px;
             border: 1px solid black;
+        }
+        #member_url {
+            float: left;
+            width:20%;
+            text-align: center;
+            color: #2080d8;
         }
         #result {
             min-height: 200px;
@@ -85,6 +91,7 @@
             <button type="button" id="btn_clear">clear</button>
         </div>
     </div>
+    <div id="member_url"><img src="" /></div>
 </div>
 </body>
 
@@ -99,13 +106,15 @@
     $(function(){
 
         if (meetingKey != undefined) {
+            var memberUrl = encodeURIComponent(webUrl + "member.html?key=" + meetingKey);
+            $("#member_url img").attr("src", "meeting/memberQrcode?url=" + memberUrl);
             initWebsocket(meetingKey);
             $("#startup").remove();
         }
     });
 
     $("#btn_startup").click(function() {
-        ajaxRequest("metting/create", "post", {}, function(data){
+        ajaxRequest("meeting/create", "post", {}, function(data){
             window.location.href = addUrlParam(window.location.href, "key", data.model);
         });
     });

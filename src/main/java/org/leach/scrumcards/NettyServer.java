@@ -1,7 +1,5 @@
 package org.leach.scrumcards;
 
-import javax.annotation.PostConstruct;
-
 import org.leach.scrumcards.channel.CardsNioServerSocketChannel;
 import org.leach.scrumcards.handler.ChildChannelHandler;
 import org.leach.scrumcards.processor.RevMsgProcessorFactory;
@@ -30,7 +28,6 @@ public class NettyServer {
     @Autowired
     private RevMsgProcessorFactory revMsgProcessorFactory;
 
-    @PostConstruct
     public void run() {
         logger.info("ScrumCards NettyServer initialized with port(s): {}", scrumCardsConfig.getNettyPort());
 

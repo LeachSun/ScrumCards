@@ -1,4 +1,5 @@
-var webSocketUrl = "ws:///127.0.0.1:6006/";
+var webUrl = "http://192.168.1.23:5005/";
+var webSocketUrl = "ws:///192.168.1.23:6006/";
 function Msg(type, content) {
 
     this.type = type;
