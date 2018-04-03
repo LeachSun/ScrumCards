@@ -61,7 +61,7 @@
 
     <logger name="org.springframework.web" level="INFO"/>
     <logger name="org.springframework.boot" level="INFO"/>
-    <logger name="org.leach.scrumcards" level="DEBUG" />
+    <logger name="org.leach.scrumcards" level="INFO" />
 
 
 </configuration>

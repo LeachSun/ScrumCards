@@ -3,48 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>ScrumCards</title>
-    <style>
-        .btn-entry {
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            font-size: 100px;
-            display: table;
-            cursor: pointer;
-        }
-
-        .btn-entry div {
-            display: table-cell;
-            vertical-align: middle;
-            text-align: center;
-        }
-
-        #btn_master {
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        #btn_member {
-            top: 50%;
-            background-color: #000000;
-            color: #ffffff;
-        }
-    </style>
 </head>
 <body>
-<div class="btn-entry" id="btn_master">
-    <div>Master</div>
-</div>
-<div class="btn-entry" id="btn_member">
-    <div>Member</div>
-</div>
 <script>
-    document.getElementById("btn_master").onclick = function(){
-        window.location.href = "master.html";
-    };
-    document.getElementById("btn_member").onclick = function(){
-        window.location.href = "member.html";
-    };
+    window.location.href = "master.html";
 </script>
 </body>
 </html>
