@@ -11,6 +11,10 @@ function Msg(type, content) {
 function MemberRegMsg(nickname) {
     this.nickname = nickname;
 }
+function MemberReconnectMsg(key, nickname) {
+    this.key = key;
+    this.nickname = nickname;
+}
 function MemberSubmitMsg(point) {
     this.point = point;
 }

@@ -33,28 +33,41 @@ function ajaxRequest(url, type, data, successCallback) {
     });
 }
 
-function CardWebsocket(url, openCallback, msgCallback) {
+function CardWebsocket(url, openCallback, msgCallback, closeCallback) {
     this.websocket = new WebSocket(url);
+    bind(this.websocket);
 
-    this.websocket.onopen = function() {
-        console.log('connect');
-        if (openCallback != undefined) {
-            openCallback();
-        }
-    };
+    function bind(ws) {
 
-    this.websocket.onmessage = function(e) {
-        var msgJson = e.data;
-        console.log('rev: ' + msgJson);
-        if (msgCallback != undefined) {
-            msgCallback(JSON.parse(msgJson));
-        }
+        ws.onopen = function() {
+            console.log('connect');
+            if (openCallback != undefined) {
+                openCallback();
+            }
+        };
 
-    };
+        ws.onmessage = function(e) {
+            var msgJson = e.data;
+            console.log('rev: ' + msgJson);
+            if (msgCallback != undefined) {
+                msgCallback(JSON.parse(msgJson));
+            }
 
-    this.websocket.onclose = function() {
-        console.log('close reconnect');
+        };
 
+        ws.onclose = function() {
+            console.log('close reconnect');
+
+            if (closeCallback != undefined) {
+                closeCallback();
+            }
+
+        };
+    }
+
+    this.reconnect = function() {
+        this.websocket = new WebSocket(url);
+        bind(this.websocket);
     };
 
     this.sendMsg = function(msgObj) {

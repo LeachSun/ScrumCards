@@ -18,5 +18,8 @@ public enum RevMsgType {
     MEMBER_REG,
 
     // submit the estimate for task (from member)
-    SUBMIT
+    SUBMIT,
+
+    // reconnect to server (from member)
+    RECONNECT
 }

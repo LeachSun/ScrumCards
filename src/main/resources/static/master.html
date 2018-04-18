@@ -96,8 +96,8 @@
 </body>
 
 <script src=js/jquery-3.2.1.min.js></script>
-<script src=js/common.js></script>
-<script src=js/message.js></script>
+<script src=js/common.js?v=1></script>
+<script src=js/message.js?v=1></script>
 <script>
     var meetingKey = getUrlParam("key");
 
@@ -151,10 +151,18 @@
             function(msg) {
                 switch (msg.code) {
                     case 200:
-                        $("#members ul").append('<li id="' + msg.model.memberKey + '"><span class="member-name" >' + msg.model.nickname + '</span>: <span class="member-estimate" value="0">wait</span></li>');
+                        if ($("#" + msg.model.memberKey).length > 0) {
+                            // 已存在
+                            var $member = $("#" + msg.model.memberKey + " .member-estimate");
+                            $member.html(parseInt($member.attr("value")) == 0 ? "wait" : "yes");
+                        } else {
+                            // 新用户
+                            $("#members ul").append('<li id="' + msg.model.memberKey + '"><span class="member-name" >' + msg.model.nickname + '</span>: <span class="member-estimate" value="0">wait</span></li>');
+                        }
                         break;
                     case 201:
-                        $("#" + msg.model.memberKey).remove();
+                        //$("#" + msg.model.memberKey).remove();
+                        $("#" + msg.model.memberKey + " .member-estimate").html("offline");
                         break;
                     case 202:
                         $("#" + msg.model.memberKey + " .member-estimate").html("yes");

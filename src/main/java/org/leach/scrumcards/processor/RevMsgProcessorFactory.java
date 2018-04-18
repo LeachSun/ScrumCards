@@ -20,15 +20,23 @@ public class RevMsgProcessorFactory implements ApplicationContextAware {
     @Autowired
     @Qualifier("masterRegRevMsgProcessor")
     private RevMsgProcessor masterRegRevMsgProcessor;
+
     @Autowired
     @Qualifier("resumeRevMsgProcessor")
     private RevMsgProcessor resumeRevMsgProcessor;
+
     @Autowired
     @Qualifier("memberRegRevMsgProcessor")
     private RevMsgProcessor memberRegRevMsgProcessor;
+
+    @Autowired
+    @Qualifier("memberReconnectRevMsgProcessor")
+    private RevMsgProcessor memberReconnectRevMsgProcessor;
+
     @Autowired
     @Qualifier("submitRevMsgProcessor")
     private RevMsgProcessor submitRevMsgProcessor;
+
     @Autowired
     @Qualifier("offlineProcessor")
     private RevMsgProcessor offlineProcessor;
@@ -41,6 +49,8 @@ public class RevMsgProcessorFactory implements ApplicationContextAware {
                 return resumeRevMsgProcessor;
             case MEMBER_REG:
                 return memberRegRevMsgProcessor;
+            case RECONNECT:
+                return memberReconnectRevMsgProcessor;
             case SUBMIT:
                 return submitRevMsgProcessor;
         }

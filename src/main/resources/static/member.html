@@ -119,7 +119,7 @@
 </head>
 <body>
 <div class="register">
-    <div><input id="nickname" value="" placeholder="nickname" /></div>
+    <div><input id="nickname" value="" placeholder="nickname" /><input id="memberKey" value="" type="hidden" /></div>
     <div><button id="btn_reg">start</button></div>
 
 </div>
@@ -145,8 +145,8 @@
 </div>
 </body>
 <script src=js/jquery-3.2.1.min.js></script>
-<script src=js/common.js></script>
-<script src=js/message.js></script>
+<script src=js/common.js?v=1></script>
+<script src=js/message.js?v=1></script>
 </html>
 <script>
 
@@ -180,21 +180,46 @@
         cardWebsocket = new CardWebsocket(webSocketUrl + meetingKey,
             function(){
                 heartbeat(cardWebsocket);
-                cardWebsocket.sendMsg(new Msg("MEMBER_REG", new MemberRegMsg($("#nickname").val())));
+                if ($("#memberKey").val() == "") {
+                    cardWebsocket.sendMsg(new Msg("MEMBER_REG", new MemberRegMsg($("#nickname").val())));
+                } else {
+                    cardWebsocket.sendMsg(new Msg("RECONNECT", new MemberReconnectMsg($("#memberKey").val(), $("#nickname").val())));
+                    if ($("#member_time").html() == "0") {
+                        showBoard();
+                    }
+                }
             },
             function(msg) {
                 switch (msg.code) {
+                    case 200:
+                        $("#memberKey").val(msg.model.memberKey);
+                        break;
                     case 203:
                         clearAll();
-                        wait = false;
-                        $(".member-btn").removeClass("member-btn-disable");
+                        showBoard();
                         break;
                 }
+            },
+            function () {
+                hideBoard();
+                reconnectServer();
             });
+    }
+    function showBoard() {
+        wait = false;
+        $(".member-btn").removeClass("member-btn-disable");
+    }
+    function hideBoard() {
+        wait = true;
+        $(".member-btn").addClass("member-btn-disable");
+    }
+    function reconnectServer() {
+        if (confirm("链接已断开，重新链接？")) {
+            cardWebsocket.reconnect();
+        }
     }
     function heartbeat(ws) {
         if (ws == undefined || ws == null || ws.state() != 1) {
-            alert("未连接");
             return;
         }
         ws.sendMsg(new Msg("HEARTBEAT"));
@@ -227,8 +252,7 @@
     $("#member_btn_submit").click(function(){
 
         cardWebsocket.sendMsg(new Msg("SUBMIT", new MemberSubmitMsg($("#member_time").html())));
-        wait = true;
-        $(".member-btn").addClass("member-btn-disable");
+        hideBoard();
     });
 
     $("#member_btn_clear").click(function(){

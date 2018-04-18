@@ -42,9 +42,13 @@ public class ChannelManager {
     public static String memberJoin(CardsNioSocketChannel channel) {
 
         String meetingKey = channel.getMeetingKey();
-        meetingChannels.get(meetingKey).getMemberGroup().add(channel);
+        MeetingChannel meetingChannel = meetingChannels.get(meetingKey);
+        if (meetingChannel == null) {
+            return null;
+        }
+        meetingChannel.getMemberGroup().add(channel);
 
-        String memberKey = KeyUtil.generateMemberKey();
+        String memberKey = channel.getMemberKey() == null ? KeyUtil.generateMemberKey() : channel.getMemberKey();
         channel.setMemberKey(memberKey);
         channel.setMaster(false);
 

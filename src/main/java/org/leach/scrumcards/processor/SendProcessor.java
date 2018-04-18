@@ -1,6 +1,7 @@
 package org.leach.scrumcards.processor;
 
 import org.leach.scrumcards.cache.ChannelManager;
+import org.leach.scrumcards.channel.CardsNioSocketChannel;
 import org.leach.scrumcards.dto.Result;
 import org.leach.scrumcards.util.JsonUtil;
 import org.slf4j.Logger;
@@ -43,5 +44,13 @@ public class SendProcessor {
         if (channelGroup != null) {
             sendToGroup(result, channelGroup);
         }
+    }
+
+    public void send(CardsNioSocketChannel channel, Result result) {
+        String msg = JsonUtil.write(result);
+
+        logger.debug("memberKey: {}, send msg: {}", channel.getMemberKey(), msg);
+        TextWebSocketFrame tws = new TextWebSocketFrame(msg);
+        channel.writeAndFlush(tws);
     }
 }
