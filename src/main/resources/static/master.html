@@ -161,6 +161,7 @@
                             // 已存在
                             var $member = $("#" + msg.model.memberKey + " .member-estimate");
                             $member.html(parseInt($member.attr("value")) == 0 ? "wait" : "<span class='member-state-yes'>yes</span>");
+                            $("#" + msg.model.memberKey + " .member-name").html(msg.model.nickname);
                         } else {
                             // 新用户
                             $("#members ul").append('<li id="' + msg.model.memberKey + '"><span class="member-name" >' + msg.model.nickname + '</span>: <span class="member-estimate" value="0">wait</span></li>');
