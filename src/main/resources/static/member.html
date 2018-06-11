@@ -150,6 +150,8 @@
 </html>
 <script>
 
+    var cMemberKey = "memberKey";
+    var cNickname = "nickname";
 
     var meetingKey = getUrlParam("key");
 
@@ -160,21 +162,33 @@
 
     var cardWebsocket;
 
+    $(function(){
+        $("#memberKey").val(getCookie(cMemberKey));
+        $("#nickname").val(getCookie(cNickname));
+    });
+
 
     $("#btn_reg").click(function(){
+        login();
+    });
+
+    function login() {
+
         if (meetingKey == undefined || meetingKey == null ) {
             alert("error url");
             return;
         }
-        if ($.trim($("#nickname").val()) == "") {
+        var nickname = $.trim($("#nickname").val());
+        if (nickname == "") {
             alert("please input your nickname");
             return;
         }
-        $("#member_name").html($.trim($("#nickname").val()));
+        setCookie(cNickname, nickname, 3600 * 1000 * 24);
+        $("#member_name").html(nickname);
         initWebsocket(meetingKey);
         $(".register").hide();
         $(".member").show();
-    });
+    }
 
     function initWebsocket(meetingKey) {
         cardWebsocket = new CardWebsocket(webSocketUrl + meetingKey,
@@ -192,6 +206,7 @@
             function(msg) {
                 switch (msg.code) {
                     case 200:
+                        setCookie(cMemberKey, msg.model.memberKey, 3600 * 1000 * 24);
                         $("#memberKey").val(msg.model.memberKey);
                         break;
                     case 203:
@@ -287,18 +302,6 @@
         var currentTime = "∞" == memberTimeElement.innerText ? 0 : parseInt(memberTimeElement.innerText);
         removeClass(document.getElementById("member_btn_infinity"), "member-btn-selected");
         memberTimeElement.innerText = "" + (selected ? currentTime + parseInt(selectedTime) : currentTime - parseInt(selectedTime));
-    }
-
-    function hasClass(elements, cName) {
-        return !!elements.className.match(new RegExp("(\\s|^)" + cName + "(\\s|$)"));
-    }
-
-    function addClass(elements, cName) {
-        elements.className += " " + cName;
-    }
-
-    function removeClass(elements, cName) {
-        elements.className = elements.className.replace(new RegExp("(\\s|^)" + cName + "(\\s|$)"), " ");
     }
 
 </script>
